@@ -286,22 +286,29 @@
     (() => {
       'use strict';
 
-      // Add your final local or GitHub-hosted MP4 URLs to individual module objects when ready.
       const copy = {
-        en: { network:'offline-ready system', eyebrow:'FIELD GUIDE / ESP32 SYSTEMS', headline:'Grow smarter.<br><em>Stay rooted.</em>', intro:'A visual, offline-first guide to the sensors and automatic responses powering your edge-isolated farm. Select a language to enter the learning hub.', back:'Change language', tag:'ENGLISH', localStream:'LOCAL STREAM', curriculum:'CURRICULUM', learningHub:'The learning hub', libraryIntro:'Eight short field lessons for every sensor, relay, and safety response in your edge-isolated farm.', complete:'path complete', ready:'Ready for your module', attach:'Attach a vertical MP4 to this module in the database to begin playback.', play:'Play selected module', pause:'Pause selected module', muted:'Unmute', unmuted:'Mute', loading:'Loading local stream…', noVideo:'No video attached — module preview mode.' },
-        hi: { network:'ऑफ़लाइन प्रणाली तैयार', eyebrow:'फील्ड गाइड / ESP32 सिस्टम', headline:'समझदारी से उगाएँ।<br><em>जड़ों से जुड़े रहें।</em>', intro:'आपके एज-आइसोलेटेड खेत के सेंसर और स्वचालित प्रतिक्रियाओं के लिए ऑफ़लाइन विज़ुअल गाइड। लर्निंग हब में प्रवेश करने के लिए भाषा चुनें।', back:'भाषा बदलें', tag:'हिंदी', localStream:'लोकल स्ट्रीम', curriculum:'पाठ्यक्रम', learningHub:'लर्निंग हब', libraryIntro:'आपके खेत के हर सेंसर, रिले और सुरक्षा प्रतिक्रिया के लिए आठ छोटे फील्ड पाठ।', complete:'पथ पूरा', ready:'मॉड्यूल के लिए तैयार', attach:'प्लेबैक शुरू करने के लिए डेटाबेस में इस मॉड्यूल की वर्टिकल MP4 जोड़ें।', play:'मॉड्यूल चलाएँ', pause:'मॉड्यूल रोकें', muted:'आवाज़ चालू करें', unmuted:'म्यूट करें', loading:'लोकल स्ट्रीम लोड हो रही है…', noVideo:'वीडियो उपलब्ध नहीं — मॉड्यूल प्रीव्यू मोड।' },
-        mr: { network:'ऑफलाइन प्रणाली तयार', eyebrow:'फील्ड गाइड / ESP32 प्रणाली', headline:'हुशारीने वाढवा।<br><em>मुळांशी जोडलेले राहा.</em>', intro:'तुमच्या एज-आयसोलेटेड शेतातील सेन्सर आणि स्वयंचलित प्रतिसादांसाठी ऑफलाइन व्हिज्युअल गाइड. लर्निंग हबमध्ये जाण्यासाठी भाषा निवडा.', back:'भाषा बदला', tag:'मराठी', localStream:'लोकल स्ट्रीम', curriculum:'अभ्यासक्रम', learningHub:'लर्निंग हब', libraryIntro:'तुमच्या शेतातील प्रत्येक सेन्सर, रिले आणि सुरक्षा प्रतिसादासाठी आठ छोटे फील्ड धडे.', complete:'मार्ग पूर्ण', ready:'मॉड्यूलसाठी तयार', attach:'प्लेबॅक सुरू करण्यासाठी डेटाबेसमध्ये या मॉड्यूलची व्हर्टिकल MP4 जोडा.', play:'मॉड्यूल चालवा', pause:'मॉड्यूल थांबवा', muted:'आवाज सुरू करा', unmuted:'म्यूट करा', loading:'लोकल स्ट्रीम लोड होत आहे…', noVideo:'व्हिडिओ जोडलेला नाही — मॉड्यूल प्रीव्ह्यू मोड.' }
+        en: { network:'offline-ready system', eyebrow:'FIELD GUIDE / ESP32 SYSTEMS', headline:'Grow smarter.<br><em>Stay rooted.</em>', intro:'A visual, offline-first guide to the sensors and automatic responses powering your edge-isolated farm. Select a language to enter the learning hub.', back:'Change language', tag:'ENGLISH', localStream:'LOCAL STREAM', curriculum:'CURRICULUM', learningHub:'The learning hub', libraryIntro:'Eight short field lessons for every sensor, relay, and safety response in your edge-isolated farm.', complete:'path complete', ready:'Ready for your module', attach:'Module in development. Video training data will be synced in the next OTA update.', play:'Play selected module', pause:'Pause selected module', muted:'Unmute', unmuted:'Mute', loading:'Loading local stream…', noVideo:'No video attached — module preview mode.' },
+        hi: { network:'ऑफ़लाइन प्रणाली तैयार', eyebrow:'फील्ड गाइड / ESP32 सिस्टम', headline:'समझदारी से उगाएँ।<br><em>जड़ों से जुड़े रहें।</em>', intro:'आपके एज-आइसोलेटेड खेत के सेंसर और स्वचालित प्रतिक्रियाओं के लिए ऑफ़लाइन विज़ुअल गाइड। लर्निंग हब में प्रवेश करने के लिए भाषा चुनें।', back:'भाषा बदलें', tag:'हिंदी', localStream:'लोकल स्ट्रीम', curriculum:'पाठ्यक्रम', learningHub:'लर्निंग हब', libraryIntro:'आपके खेत के हर सेंसर, रिले और सुरक्षा प्रतिक्रिया के लिए आठ छोटे फील्ड पाठ।', complete:'पथ पूरा', ready:'मॉड्यूल के लिए तैयार', attach:'यह मॉड्यूल विकास में है। अगले अपडेट में वीडियो उपलब्ध होगा।', play:'मॉड्यूल चलाएँ', pause:'मॉड्यूल रोकें', muted:'आवाज़ चालू करें', unmuted:'म्यूट करें', loading:'लोकल स्ट्रीम लोड हो रही है…', noVideo:'वीडियो उपलब्ध नहीं — मॉड्यूल प्रीव्यू मोड।' },
+        mr: { network:'ऑफलाइन प्रणाली तयार', eyebrow:'फील्ड गाइड / ESP32 प्रणाली', headline:'हुशारीने वाढवा।<br><em>मुळांशी जोडलेले राहा.</em>', intro:'तुमच्या एज-आयसोलेटेड शेतातील सेन्सर आणि स्वयंचलित प्रतिसादांसाठी ऑफलाइन व्हिज्युअल गाइड. लर्निंग हबमध्ये जाण्यासाठी भाषा निवडा.', back:'भाषा बदला', tag:'मराठी', localStream:'लोकल स्ट्रीम', curriculum:'अभ्यासक्रम', learningHub:'लर्निंग हब', libraryIntro:'तुमच्या शेतातील प्रत्येक सेन्सर, रिले आणि सुरक्षा प्रतिसादासाठी आठ छोटे फील्ड धडे.', complete:'मार्ग पूर्ण', ready:'मॉड्यूलसाठी तयार', attach:'हे मॉड्यूल प्रगतीपथावर आहे. पुढील अपडेटमध्ये व्हिडिओ उपलब्ध होईल.', play:'मॉड्यूल चालवा', pause:'मॉड्यूल थांबवा', muted:'आवाज सुरू करा', unmuted:'म्यूट करा', loading:'लोकल स्ट्रीम लोड होत आहे…', noVideo:'व्हिडिओ जोडलेला नाही — मॉड्यूल प्रीव्ह्यू मोड.' }
       };
 
       const modules = [
-        { id:'ap-dash', icon:'⌁', format:'16:9', key:'ap', title:{en:'1. The 192.168.4.1 Dashboard',hi:'१. ESP32 डैशबोर्ड से जुड़ें',mr:'१. ESP32 डॅशबोर्ड कसा वापरावा'}, desc:{en:'Connect to the ESP32 local Wi-Fi and use the browser dashboard without internet.',hi:'बिना इंटरनेट के 192.168.4.1 वाई-फाई का उपयोग कैसे करें।',mr:'इंटरनेटशिवाय 192.168.4.1 वायफाय कसे कनेक्ट करावे.'}, video:'' },
-        { id:'soil-pump', icon:'◌', format:'9:16', key:'soil', title:{en:'2. Soil Moisture & Auto Pump',hi:'२. मिट्टी की नमी और मोटर',mr:'२. मातीचा ओलावा आणि पंप'}, desc:{en:'See how dry soil triggers the irrigation relay and pump automatically.',hi:'सूखी मिट्टी होने पर स्वचालित मोटर पंप कैसे शुरू होता है।',mr:'माती सुकल्यावर मोटर आपोआप कशी चालू होते.'}, video:'./videos/soil_hindi.mp4' },
-        { id:'dht-humid', icon:'⌁', format:'9:16', key:'dht', title:{en:'3. DHT11 Temp & Humidity',hi:'३. तापमान और नमी (DHT11)',mr:'३. तापमान व आर्द्रता (DHT11)'}, desc:{en:'Monitor climate data and see how low humidity triggers the humidifier.',hi:'हवा में नमी कम होने पर ह्यूमिडिफायर का उपयोग।',mr:'हवेत कोरडेपणा आल्यास ह्युमिडिफायर कसे चालते.'}, video:'' },
-        { id:'mq135-air', icon:'≈', format:'9:16', key:'air', title:{en:'4. MQ-135 Air Quality',hi:'४. हवा की गुणवत्ता (MQ-135)',mr:'४. हवेची गुणवत्ता (MQ-135)'}, desc:{en:'Establish a clean-air baseline and detect gas or smoke around crops.',hi:'फसल के लिए धुएं और गैस का पता कैसे लगाएं।',mr:'पिकांसाठी धूर आणि वायू प्रदूषणाची तपासणी.'}, video:'' },
-        { id:'flame-fire', icon:'✦', format:'9:16', key:'fire', title:{en:'5. Flame Sensor / Fire Alert',hi:'५. आग का अलर्ट (Flame Sensor)',mr:'५. आगीचा इशारा (Flame Sensor)'}, desc:{en:'See the dashboard raise an urgent popup and alarm during a fire event.',hi:'खेत में आग लगने पर तुरंत डैशबोर्ड अलर्ट और सायरन।',mr:'आग लागल्यास तात्काळ डॅशबोर्ड अलर्ट आणि सायरन.'}, video:'' },
-        { id:'vib-quake', icon:'∿', format:'9:16', key:'quake', title:{en:'6. Vibration & Earthquakes',hi:'६. भूकंप और कंपन सेंसर',mr:'६. भूकंप आणि कंपन सेन्सर'}, desc:{en:'Filter accidental taps and identify earthquake-like tremors.',hi:'भूकंप जैसे झटकों का सटीक पता लगाना।',mr:'भूकंपासारख्या धक्क्यांची अचूक नोंद घेणे.'}, video:'' },
-        { id:'animal-ultra', icon:'◉', format:'9:16', key:'animal', title:{en:'7. Animal Intrusion Deterrent',hi:'७. जंगली जानवर सुरक्षा',mr:'७. प्राण्यांपासून संरक्षण'}, desc:{en:'Trigger 40kHz ultrasonic bursts to help repel animal intrusion.',hi:'जानवर के छूने पर 40kHz अल्ट्रासोनिक तरंगों द्वारा बचाव।',mr:'प्राण्यांचा स्पर्श झाल्यास 40kHz अल्ट्रासोनिक लहरी.'}, video:'' },
-        { id:'manual-auto', icon:'◇', format:'9:16', key:'manual', title:{en:'8. Manual vs Auto Mode',hi:'८. मैनुअल और ऑटो मोड',mr:'८. मॅन्युअल विरुद्ध ऑटो मोड'}, desc:{en:'Override sensor thresholds and take manual control of the pump and humidifier.',hi:'सेंसर को बाईपास करके पंप को खुद कैसे कंट्रोल करें।',mr:'सेन्सरऐवजी पंप स्वतःच्या हाताने कसा नियंत्रित करावा.'}, video:'' }
+        { id:'ap-dash', icon:'⌁', format:'16:9', key:'ap', title:{en:'1. The 192.168.4.1 Dashboard',hi:'१. ESP32 डैशबोर्ड से जुड़ें',mr:'१. ESP32 डॅशबोर्ड कसा वापरावा'}, desc:{en:'Connect to the ESP32 local Wi-Fi and use the browser dashboard without internet.',hi:'बिना इंटरनेट के 192.168.4.1 वाई-फाई का उपयोग कैसे करें।',mr:'इंटरनेटशिवाय 192.168.4.1 वायफाय कसे कनेक्ट करावे.'}, video:{en:'', hi:'', mr:''} },
+        
+        { id:'soil-pump', icon:'◌', format:'9:16', key:'soil', title:{en:'2. Soil Moisture & Auto Pump',hi:'२. मिट्टी की नमी और मोटर',mr:'२. मातीचा ओलावा आणि पंप'}, desc:{en:'See how dry soil triggers the irrigation relay and pump automatically.',hi:'सूखी मिट्टी होने पर स्वचालित मोटर पंप कैसे शुरू होता है।',mr:'माती सुकल्यावर मोटर आपोआप कशी चालू होते.'}, 
+          video:{
+            en:'./videos/soil_eng.mp4', 
+            hi:'./videos/soil_hindi.mp4', 
+            mr:'' 
+          } 
+        },
+
+        { id:'dht-humid', icon:'⌁', format:'9:16', key:'dht', title:{en:'3. DHT11 Temp & Humidity',hi:'३. तापमान और नमी (DHT11)',mr:'३. तापमान व आर्द्रता (DHT11)'}, desc:{en:'Monitor climate data and see how low humidity triggers the humidifier.',hi:'हवा में नमी कम होने पर ह्यूमिडिफायर का उपयोग।',mr:'हवेत कोरडेपणा आल्यास ह्युमिडिफायर कसे चालते.'}, video:{en:'', hi:'', mr:''} },
+        { id:'mq135-air', icon:'≈', format:'9:16', key:'air', title:{en:'4. MQ-135 Air Quality',hi:'४. हवा की गुणवत्ता (MQ-135)',mr:'४. हवेची गुणवत्ता (MQ-135)'}, desc:{en:'Establish a clean-air baseline and detect gas or smoke around crops.',hi:'फसल के लिए धुएं और गैस का पता कैसे लगाएं।',mr:'पिकांसाठी धूर आणि वायू प्रदूषणाची तपासणी.'}, video:{en:'', hi:'', mr:''} },
+        { id:'flame-fire', icon:'✦', format:'9:16', key:'fire', title:{en:'5. Flame Sensor / Fire Alert',hi:'५. आग का अलर्ट (Flame Sensor)',mr:'५. आगीचा इशारा (Flame Sensor)'}, desc:{en:'See the dashboard raise an urgent popup and alarm during a fire event.',hi:'खेत में आग लगने पर तुरंत डैशबोर्ड अलर्ट और सायरन।',mr:'आग लागल्यास तात्काळ डॅशबोर्ड अलर्ट आणि सायरन.'}, video:{en:'', hi:'', mr:''} },
+        { id:'vib-quake', icon:'∿', format:'9:16', key:'quake', title:{en:'6. Vibration & Earthquakes',hi:'६. भूकंप और कंपन सेंसर',mr:'६. भूकंप आणि कंपन सेन्सर'}, desc:{en:'Filter accidental taps and identify earthquake-like tremors.',hi:'भूकंप जैसे झटकों का सटीक पता लगाना।',mr:'भूकंपासारख्या धक्क्यांची अचूक नोंद घेणे.'}, video:{en:'', hi:'', mr:''} },
+        { id:'animal-ultra', icon:'◉', format:'9:16', key:'animal', title:{en:'7. Animal Intrusion Deterrent',hi:'७. जंगली जानवर सुरक्षा',mr:'७. प्राण्यांपासून संरक्षण'}, desc:{en:'Trigger 40kHz ultrasonic bursts to help repel animal intrusion.',hi:'जानवर के छूने पर 40kHz अल्ट्रासोनिक तरंगों द्वारा बचाव।',mr:'प्राण्यांचा स्पर्श झाल्यास 40kHz अल्ट्रासोनिक लहरी.'}, video:{en:'', hi:'', mr:''} },
+        { id:'manual-auto', icon:'◇', format:'9:16', key:'manual', title:{en:'8. Manual vs Auto Mode',hi:'८. मैनुअल और ऑटो मोड',mr:'८. मॅन्युअल विरुद्ध ऑटो मोड'}, desc:{en:'Override sensor thresholds and take manual control of the pump and humidifier.',hi:'सेंसर को बाईपास करके पंप को खुद कैसे कंट्रोल करें।',mr:'सेन्सरऐवजी पंप स्वतःच्या हाताने कसा नियंत्रित करावा.'}, video:{en:'', hi:'', mr:''} }
       ];
 
       const $ = (selector) => document.querySelector(selector);
@@ -346,6 +353,8 @@
       function updateActiveModule(index, autoplay = true) {
         activeIndex = (index + modules.length) % modules.length;
         const mod = modules[activeIndex];
+        const currentVid = moduleText(mod, 'video') || ''; 
+        
         $$('.module-item').forEach((item, itemIndex) => item.classList.toggle('active', itemIndex === activeIndex));
         els.title.textContent = moduleText(mod, 'title');
         els.desc.textContent = moduleText(mod, 'desc');
@@ -353,17 +362,18 @@
         els.format.textContent = `${mod.format} / ${mod.format === '9:16' ? 'SHORT' : 'WIDE'}`;
         els.placeholderSymbol.textContent = mod.icon;
         els.placeholderTitle.textContent = t('ready');
-        els.placeholderCopy.textContent = mod.video ? t('loading') : t('attach');
+        els.placeholderCopy.textContent = currentVid ? t('loading') : t('attach');
         els.progress.style.width = '0%';
         els.current.textContent = '00:00';
         els.total.textContent = '00:00';
         els.backdrop.style.background = `radial-gradient(circle at 50% 24%, ${mod.key === 'fire' ? 'rgba(255,183,3,.30)' : 'rgba(0,255,136,.24)'}, transparent 30%), linear-gradient(160deg, ${mod.key === 'air' ? '#092c37' : '#092216'}, #020403 65%)`;
-        els.source.src = mod.video || '';
+        
+        els.source.src = currentVid;
         els.video.load();
-        els.placeholder.classList.toggle('hidden', Boolean(mod.video));
+        els.placeholder.classList.toggle('hidden', Boolean(currentVid));
         els.play.textContent = '▶';
         els.play.setAttribute('aria-label', t('play'));
-        if (autoplay && mod.video) els.video.play().catch(() => showToast(t('loading')));
+        if (autoplay && currentVid) els.video.play().catch(() => showToast(t('loading')));
         const selected = els.list.querySelector(`[data-index="${activeIndex}"]`);
         if (selected) selected.scrollIntoView({ block:'nearest', behavior:'smooth' });
       }
@@ -384,7 +394,14 @@
         card.addEventListener('click', () => startApp(card.dataset.lang));
       });
       els.back.addEventListener('click', goHome);
-      els.play.addEventListener('click', () => { if (!modules[activeIndex].video) return showToast(t('noVideo')); if (els.video.paused) els.video.play(); else els.video.pause(); });
+      
+      els.play.addEventListener('click', () => { 
+        const currentVid = moduleText(modules[activeIndex], 'video') || '';
+        if (!currentVid) return showToast(t('noVideo')); 
+        if (els.video.paused) els.video.play(); 
+        else els.video.pause(); 
+      });
+      
       els.nextButton = $('#next-button');
       els.nextButton.addEventListener('click', () => updateActiveModule(activeIndex + 1, true));
       els.mute.addEventListener('click', () => { els.video.muted = !els.video.muted; els.mute.textContent = els.video.muted ? '◌' : '⌕'; els.mute.setAttribute('aria-label', els.video.muted ? t('muted') : t('unmuted')); });
@@ -399,7 +416,6 @@
       document.addEventListener('keydown', (event) => { if (!els.hubView.classList.contains('active')) return; if (event.key === ' ') { event.preventDefault(); els.play.click(); } if (event.key === 'ArrowRight') updateActiveModule(activeIndex + 1, true); if (event.key === 'ArrowLeft') updateActiveModule(activeIndex - 1, true); });
       document.addEventListener('visibilitychange', () => { if (document.hidden && !els.video.paused) els.video.pause(); });
 
-      // Lightweight decorative particles only; no device permissions or external APIs are required.
       const canvas = $('#particle-field');
       const context = canvas.getContext('2d');
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
