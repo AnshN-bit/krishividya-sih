@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#07100c" />
+  <meta name="description" content="KrishiVidya Pro — a multilingual smart agriculture field guide for ESP32 edge systems." />
+  <title>KrishiVidya Pro | Cyber-Agriculture Field Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #050706;
+      --void-2: #09130e;
+      --panel: rgba(13, 24, 18, .78);
+      --line: rgba(188, 255, 219, .14);
+      --line-bright: rgba(0, 255, 136, .42);
+      --ink: #f1fff7;
+      --muted: #92a79a;
+      --dim: #5c7165;
+      --emerald: #00ff88;
+      --emerald-2: #65ffc0;
+      --gold: #ffb703;
+      --shadow-green: rgba(0, 255, 136, .25);
+      --ease: cubic-bezier(.25, 1, .5, 1);
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { min-height: 100%; background: var(--void); }
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 11% 5%, rgba(0,255,136,.10), transparent 30rem),
+        radial-gradient(circle at 100% 95%, rgba(0,165,255,.08), transparent 35rem),
+        linear-gradient(135deg, var(--void), var(--void-2) 55%, var(--void));
+      font-family: 'Space Grotesk', 'Noto Sans Devanagari', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.is-hi, body.is-mr { font-family: 'Noto Sans Devanagari', 'Space Grotesk', sans-serif; }
+    button, select { font: inherit; }
+    button { color: inherit; }
+    ::selection { color: var(--void); background: var(--emerald); }
+    :focus-visible { outline: 2px solid var(--emerald); outline-offset: 4px; }
+
+    #particle-field { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .72; }
+    .grain { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .04; mix-blend-mode: screen; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E"); }
+    .ambient { position: fixed; z-index: 0; width: 32rem; height: 32rem; border-radius: 50%; filter: blur(100px); opacity: .12; pointer-events: none; }
+    .ambient.a { top: -16rem; left: -10rem; background: var(--emerald); }
+    .ambient.b { right: -18rem; bottom: -14rem; background: #1686ff; }
+
+    .shell { position: relative; z-index: 2; min-height: 100vh; }
+    .view { position: fixed; inset: 0; z-index: 3; overflow-y: auto; padding: clamp(1.2rem, 3vw, 2.5rem); opacity: 0; pointer-events: none; transform: translateY(18px) scale(.985); transition: opacity .65s var(--ease), transform .65s var(--ease); }
+    .view.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .view::-webkit-scrollbar { width: 7px; }
+    .view::-webkit-scrollbar-thumb { background: rgba(0,255,136,.25); border-radius: 99px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .55rem; color: var(--emerald); text-transform: uppercase; letter-spacing: .17em; font: 500 .68rem/1 'DM Mono', monospace; }
+    .eyebrow::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 16px var(--emerald); }
+
+    /* Language selection */
+    #view-lang { display: grid; place-items: center; }
+    .landing { width: min(100%, 1120px); padding: clamp(1.5rem, 4vw, 4rem) 0; }
+    .landing-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(3.2rem, 9vh, 7rem); }
+    .wordmark { display: flex; align-items: center; gap: .75rem; }
+    .seed-mark { position: relative; width: 42px; height: 42px; flex: 0 0 auto; border: 1px solid var(--line-bright); border-radius: 14px 14px 14px 4px; transform: rotate(-12deg); background: rgba(0,255,136,.06); box-shadow: inset 0 0 24px rgba(0,255,136,.12), 0 0 26px rgba(0,255,136,.12); }
+    .seed-mark::before, .seed-mark::after { content: ''; position: absolute; border: 1px solid var(--emerald); border-radius: 100% 0 100% 0; transform: rotate(24deg); }
+    .seed-mark::before { width: 17px; height: 25px; left: 12px; top: 7px; }
+    .seed-mark::after { width: 1px; height: 25px; left: 21px; top: 8px; background: var(--emerald); border: 0; transform: rotate(-30deg); }
+    .wordmark strong { font-size: 1.1rem; letter-spacing: -.04em; }
+    .wordmark small { display: block; margin-top: .22rem; color: var(--dim); font: .61rem 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .network-state { display: inline-flex; align-items: center; gap: .6rem; color: var(--muted); font: .66rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .network-state i { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 14px var(--emerald); }
+    .landing-copy { max-width: 820px; }
+    .landing-copy h1 { margin: 1.45rem 0 1.3rem; max-width: 800px; font-size: clamp(3rem, 8vw, 7.4rem); line-height: .88; letter-spacing: -.085em; font-weight: 700; }
+    .landing-copy h1 em { color: var(--emerald); font-style: normal; text-shadow: 0 0 36px rgba(0,255,136,.3); }
+    .landing-copy p { max-width: 590px; color: var(--muted); font-size: clamp(1rem, 1.55vw, 1.2rem); line-height: 1.7; }
+    .language-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: clamp(2.5rem, 7vh, 5rem); max-width: 930px; }
+    .lang-card { --rx: 0deg; --ry: 0deg; position: relative; min-height: 235px; overflow: hidden; cursor: pointer; text-align: left; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.018)); backdrop-filter: blur(20px) saturate(150%); transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .18s ease, border-color .4s var(--ease), box-shadow .4s var(--ease), background .4s var(--ease); }
+    .lang-card::before { content: ''; position: absolute; inset: -45%; background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,255,136,.28), transparent 24%); opacity: 0; transition: opacity .4s var(--ease); pointer-events: none; }
+    .lang-card::after { content: ''; position: absolute; right: -28px; bottom: -35px; width: 130px; height: 130px; border: 1px solid rgba(0,255,136,.14); border-radius: 50%; box-shadow: 0 0 0 12px rgba(0,255,136,.025), 0 0 0 24px rgba(0,255,136,.02); }
+    .lang-card:hover, .lang-card:focus-visible { border-color: var(--line-bright); background: linear-gradient(145deg, rgba(0,255,136,.13), rgba(255,255,255,.035)); box-shadow: 0 24px 60px rgba(0,0,0,.35), 0 0 42px var(--shadow-green); }
+    .lang-card:hover::before { opacity: 1; }
+    .lang-card .card-num { color: var(--dim); font: .7rem 'DM Mono', monospace; }
+    .lang-card .lang-symbol { margin: 2.8rem 0 1.1rem; color: var(--emerald); font-size: 2.1rem; filter: drop-shadow(0 0 12px rgba(0,255,136,.36)); }
+    .lang-card h2 { position: relative; z-index: 1; font-size: 1.35rem; letter-spacing: -.04em; }
+    .lang-card p { position: relative; z-index: 1; margin-top: .35rem; color: var(--muted); font-size: .77rem; line-height: 1.5; }
+    .landing-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.8rem; color: var(--dim); font: .62rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .landing-foot span:last-child { color: var(--emerald); }
+
+    /* Learning hub */
+    #view-hub { padding: clamp(.7rem, 2vw, 1.4rem); }
+    .hub { width: min(1480px, 100%); min-height: calc(100dvh - 1.4rem); margin: auto; display: grid; grid-template-rows: auto 1fr; gap: 1rem; }
+    .hub-nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .7rem .85rem .7rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: rgba(7,16,11,.78); backdrop-filter: blur(20px) saturate(150%); }
+    .nav-left, .nav-right { display: flex; align-items: center; gap: .8rem; min-width: 0; }
+    .icon-btn, .outline-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; border: 1px solid var(--line); background: rgba(255,255,255,.025); border-radius: 12px; cursor: pointer; transition: .35s var(--ease); }
+    .icon-btn { width: 46px; flex: 0 0 auto; font-size: 1.1rem; }
+    .outline-btn { gap: .5rem; padding: 0 1rem; color: var(--muted); font-size: .78rem; white-space: nowrap; }
+    .icon-btn:hover, .outline-btn:hover { color: var(--emerald); border-color: var(--line-bright); background: rgba(0,255,136,.08); }
+    .nav-title { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+    .nav-title strong { font-size: .95rem; letter-spacing: -.03em; }
+    .nav-title small { display: block; margin-top: .12rem; color: var(--dim); font: .58rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .lang-badge { display: inline-flex; align-items: center; gap: .45rem; padding: .6rem .75rem; border: 1px solid rgba(0,255,136,.22); border-radius: 10px; color: var(--emerald); background: rgba(0,255,136,.05); font: .66rem 'DM Mono', monospace; white-space: nowrap; }
+    .lang-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+    .hub-layout { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 1rem; }
+    .reel-panel, .library-panel { min-height: 0; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--panel); backdrop-filter: blur(20px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.25); }
+    .reel-panel { display: grid; place-items: center; padding: 1.15rem; }
+    .reel-panel::before { content: ''; position: absolute; inset: 8% 16%; z-index: -1; border-radius: 40%; background: rgba(0,255,136,.23); filter: blur(75px); opacity: .8; animation: aura 8s ease-in-out infinite alternate; }
+    @keyframes aura { to { transform: scale(1.12) translate(2%,-1%); filter: blur(100px); opacity: .55; } }
+    .reel-stage { position: relative; width: min(100%, 560px); height: min(calc(100dvh - 11.8rem), 780px); min-height: 480px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 26px; background: #030504; box-shadow: 0 25px 70px rgba(0,0,0,.55), inset 0 0 80px rgba(0,0,0,.45); }
+    .reel-stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 23%, transparent 54%, rgba(0,0,0,.88) 100%); }
+    .video-backdrop { position: absolute; inset: -13%; z-index: 0; background: radial-gradient(circle at 50% 20%, rgba(0,255,136,.22), transparent 34%), linear-gradient(160deg, #092216, #020403 65%); filter: blur(30px); transform: scale(1.12); transition: background .5s var(--ease); }
+    .reel-stage video { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; background: linear-gradient(160deg, #0d2519, #030504 63%); touch-action: manipulation; }
+    .video-placeholder { position: absolute; inset: 0; z-index: 2; display: grid; place-items: start center; padding: clamp(5rem,23%,10rem) 1.5rem 15rem; text-align: center; background: radial-gradient(circle at 50% 31%, rgba(0,255,136,.10), transparent 25%), linear-gradient(160deg, rgba(6,27,17,.58), rgba(0,0,0,.22)); pointer-events: none; transition: opacity .3s ease; }
+    .video-placeholder.hidden { opacity: 0; }
+    .placeholder-inner { width: min(100%, 26ch); margin-inline: auto; }
+    .placeholder-symbol { display: grid; place-items: center; width: 68px; height: 68px; margin: 0 auto 1rem; border: 1px solid rgba(0,255,136,.35); border-radius: 22px; color: var(--emerald); background: rgba(0,255,136,.07); box-shadow: 0 0 40px rgba(0,255,136,.15); font-size: 1.6rem; }
+    .placeholder-inner h3 { font-size: 1.05rem; line-height: 1.25; text-wrap: balance; }
+    .placeholder-inner p { margin-top: .45rem; color: var(--muted); font-size: .72rem; line-height: 1.55; text-wrap: balance; }
+    .reel-top { position: absolute; z-index: 3; top: 1rem; left: 1rem; right: 1rem; display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+    .live-chip, .format-chip { display: inline-flex; align-items: center; gap: .4rem; padding: .48rem .62rem; border: 1px solid rgba(255,255,255,.17); border-radius: 9px; background: rgba(0,0,0,.28); backdrop-filter: blur(10px); color: #d9fbe9; font: .6rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .07em; }
+    .live-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+    .format-chip { color: var(--muted); }
+    .reel-content { position: absolute; z-index: 3; left: 1.25rem; right: 1.25rem; bottom: 1.25rem; min-width: 0; }
+    .module-kicker { color: var(--emerald); font: .62rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .13em; }
+    .reel-content h1 { max-width: 100%; margin-top: .65rem; font-size: clamp(1.35rem, 4vw, 2.6rem); line-height: 1.08; letter-spacing: -.045em; overflow-wrap: anywhere; hyphens: auto; text-wrap: balance; }
+    .reel-content p { max-width: 100%; margin-top: .65rem; color: #b4c8ba; font-size: .78rem; line-height: 1.55; overflow-wrap: anywhere; text-wrap: pretty; }
+    body.is-hi .reel-content h1, body.is-mr .reel-content h1 { line-height: 1.16; letter-spacing: -.02em; }
+    body.is-hi .reel-content p, body.is-mr .reel-content p { line-height: 1.7; }
+    .progress-wrap { margin-top: 1.1rem; }
+    .progress-track { width: 100%; height: 3px; overflow: hidden; border-radius: 20px; background: rgba(255,255,255,.15); }
+    .progress-bar { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--emerald), var(--emerald-2)); box-shadow: 0 0 14px var(--emerald); transition: width .15s linear; }
+    .progress-meta { display: flex; justify-content: space-between; margin-top: .45rem; color: var(--muted); font: .58rem 'DM Mono', monospace; }
+    .control-pill { display: flex; align-items: center; justify-content: space-between; gap: .55rem; width: max-content; max-width: 100%; margin-top: 1rem; padding: .35rem; border: 1px solid rgba(255,255,255,.15); border-radius: 15px; background: rgba(5,9,7,.63); backdrop-filter: blur(18px) saturate(140%); }
+    .control-pill button { min-width: 48px; min-height: 48px; border: 0; border-radius: 11px; cursor: pointer; background: transparent; color: #d8e8de; transition: .3s var(--ease); }
+    .control-pill button:hover { color: var(--void); background: var(--emerald); box-shadow: 0 0 22px rgba(0,255,136,.3); }
+    .speed-select { min-height: 48px; padding: 0 .7rem; border: 0; border-left: 1px solid rgba(255,255,255,.13); color: var(--muted); outline: 0; background: transparent; cursor: pointer; font: .65rem 'DM Mono', monospace; }
+    .speed-select option { color: var(--ink); background: #0a130e; }
+
+    /* Module library */
+    .library-panel { display: grid; grid-template-rows: auto 1fr auto; }
+    .library-head { padding: 1.35rem 1.35rem 1.1rem; border-bottom: 1px solid var(--line); }
+    .library-head-row { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+    .library-head h2 { margin-top: .55rem; font-size: 1.3rem; letter-spacing: -.05em; }
+    .module-count { color: var(--emerald); font: .65rem 'DM Mono', monospace; }
+    .library-head p { margin-top: .6rem; color: var(--muted); font-size: .74rem; line-height: 1.5; }
+    .module-list { overflow-y: auto; padding: .75rem; }
+    .module-list::-webkit-scrollbar { width: 5px; }
+    .module-list::-webkit-scrollbar-thumb { background: rgba(0,255,136,.22); border-radius: 99px; }
+    .module-item { position: relative; display: grid; grid-template-columns: 43px minmax(0,1fr) auto; gap: .75rem; align-items: center; width: 100%; margin-bottom: .4rem; padding: .75rem; border: 1px solid transparent; border-radius: 15px; text-align: left; background: transparent; cursor: pointer; transition: .4s var(--ease); }
+    .module-item:hover { border-color: var(--line); background: rgba(255,255,255,.035); transform: translateX(3px); }
+    .module-item.active { border-color: rgba(0,255,136,.3); background: linear-gradient(100deg, rgba(0,255,136,.12), rgba(0,255,136,.025)); }
+    .module-item.active::before { content: ''; position: absolute; left: -1px; top: 10px; bottom: 10px; width: 3px; border-radius: 5px; background: var(--emerald); box-shadow: 0 0 14px var(--emerald); }
+    .module-icon { display: grid; place-items: center; width: 43px; height: 43px; border: 1px solid var(--line); border-radius: 13px; background: rgba(0,0,0,.25); color: var(--emerald); font-size: 1.1rem; }
+    .module-item.active .module-icon { border-color: rgba(0,255,136,.38); box-shadow: inset 0 0 16px rgba(0,255,136,.08); }
+    .module-info { min-width: 0; }
+    .module-info h3 { overflow: hidden; color: #e7f8ed; font-size: .78rem; font-weight: 600; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+    .module-info p { overflow: hidden; margin-top: .25rem; color: var(--muted); font-size: .64rem; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-track { position: relative; width: 34px; height: 34px; }
+    .mini-track svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .mini-track circle { fill: none; stroke-width: 3; }
+    .mini-track .track { stroke: rgba(255,255,255,.10); }
+    .mini-track .fill { stroke: var(--emerald); stroke-linecap: round; stroke-dasharray: 94; stroke-dashoffset: var(--offset,94); transition: stroke-dashoffset .5s var(--ease); }
+    .mini-track span { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font: .5rem 'DM Mono', monospace; }
+    .library-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; border-top: 1px solid var(--line); color: var(--dim); font: .59rem 'DM Mono', monospace; }
+    .library-foot strong { color: var(--emerald); font-weight: 400; }
+    .toast { position: fixed; z-index: 20; left: 50%; bottom: 1.4rem; max-width: calc(100vw - 2rem); padding: .75rem 1rem; border: 1px solid rgba(0,255,136,.3); border-radius: 12px; color: var(--ink); background: rgba(7,16,11,.9); backdrop-filter: blur(16px); box-shadow: 0 12px 35px rgba(0,0,0,.35), 0 0 30px rgba(0,255,136,.12); font-size: .75rem; text-align: center; transform: translate(-50%, 150%); transition: transform .45s var(--ease); }
+    .toast.show { transform: translate(-50%, 0); }
+
+    @media (max-width: 900px) {
+      #view-hub { min-height: 100dvh; }
+      .hub { min-height: auto; }
+      .hub-layout { grid-template-columns: minmax(0,1fr); min-width: 0; }
+      .reel-panel, .library-panel { min-width: 0; }
+      .reel-panel { min-height: 640px; }
+      .reel-stage { width: min(100%,560px); height: min(78dvh,720px); }
+      .library-panel { max-height: 520px; }
+    }
+    @media (max-width: 620px) {
+      .view { padding: .9rem; padding-bottom: max(.9rem, env(safe-area-inset-bottom)); }
+      .landing-top { margin-bottom: 3.2rem; }
+      .network-state { display: none; }
+      .landing-copy h1 { font-size: clamp(3.2rem,17vw,5.8rem); }
+      .language-grid { grid-template-columns: 1fr; margin-top: 2.5rem; }
+      .lang-card { min-height: 150px; padding: 1.25rem; }
+      .lang-card .lang-symbol { display: inline-block; margin: 1.8rem .7rem 0 0; font-size: 1.7rem; vertical-align: middle; }
+      .lang-card h2 { display: inline-block; vertical-align: middle; }
+      .lang-card p { margin-left: 2.65rem; }
+      .landing-foot { flex-direction: column; align-items: flex-start; }
+      .hub-nav { position: sticky; top: 0; z-index: 10; padding-left: .65rem; }
+      .nav-title small { display: none; }
+      .nav-title strong { font-size: .78rem; }
+      .outline-btn { padding: 0 .75rem; }
+      .reel-panel { min-height: auto; padding: .55rem; border-radius: 22px; }
+      .reel-stage { width: 100%; min-height: 500px; height: min(78dvh,650px); border-radius: 20px; }
+      .reel-content { left: 1rem; right: 1rem; bottom: 1rem; }
+      .video-placeholder { padding: 23% 1rem 15rem; }
+      .placeholder-inner { width: min(100%,22ch); }
+      .reel-content h1 { font-size: clamp(1.25rem,6.5vw,2rem); }
+      .library-panel { border-radius: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-field" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient a" aria-hidden="true"></div>
+  <div class="ambient b" aria-hidden="true"></div>
+
+  <main class="shell">
+    <section id="view-lang" class="view active" aria-labelledby="welcome-title">
+      <div class="landing">
+        <header class="landing-top">
+          <div class="wordmark">
+            <div class="seed-mark" aria-hidden="true"></div>
+            <div><strong>KrishiVidya <span style="color:var(--emerald)">Pro</span></strong><small>edge intelligence / field guide</small></div>
+          </div>
+          <div class="network-state"><i></i><span data-i18n="network">offline-ready system</span></div>
+        </header>
+        <div class="landing-copy">
+          <span class="eyebrow" data-i18n="eyebrow">FIELD GUIDE / ESP32 SYSTEMS</span>
+          <h1 id="welcome-title" data-i18n="headline">Grow smarter.<br /><em>Stay rooted.</em></h1>
+          <p data-i18n="intro">A visual, offline-first guide to the sensors and automatic responses powering your edge-isolated farm. Select a language to enter the learning hub.</p>
+        </div>
+        <div class="language-grid" role="list" aria-label="Choose a language">
+          <button class="lang-card" data-lang="en" role="listitem" type="button"><span class="card-num">01 / EN</span><div class="lang-symbol">↗</div><h2>English</h2><p>Hardware masterclass</p></button>
+          <button class="lang-card" data-lang="hi" role="listitem" type="button"><span class="card-num">02 / HI</span><div class="lang-symbol">◌</div><h2>हिंदी</h2><p>उपकरण मार्गदर्शन</p></button>
+          <button class="lang-card" data-lang="mr" role="listitem" type="button"><span class="card-num">03 / MR</span><div class="lang-symbol">⌁</div><h2>मराठी</h2><p>शेतकरी मार्गदर्शन</p></button>
+        </div>
+        <footer class="landing-foot"><span>local address / 192.168.4.1</span><span>sensor mesh connected</span></footer>
+      </div>
+    </section>
+
+    <section id="view-hub" class="view" aria-label="KrishiVidya learning hub">
+      <div class="hub">
+        <header class="hub-nav">
+          <div class="nav-left">
+            <button id="back-button" class="outline-btn" type="button" aria-label="Change language"><span aria-hidden="true">←</span><span id="back-label">Change language</span></button>
+            <div class="nav-title"><div class="seed-mark" style="width:30px;height:30px;border-radius:10px 10px 10px 3px;transform:rotate(-12deg) scale(.75)" aria-hidden="true"></div><div><strong>KrishiVidya <span style="color:var(--emerald)">Pro</span></strong><small>learning hub / local mode</small></div></div>
+          </div>
+          <div class="nav-right"><span class="lang-badge" id="lang-badge">ENGLISH</span><button id="theme-button" class="icon-btn" type="button" aria-label="Toggle ambient mode">◒</button></div>
+        </header>
+
+        <div class="hub-layout">
+          <section class="reel-panel" aria-label="Module video player">
+            <div id="reel-stage" class="reel-stage">
+              <div id="video-backdrop" class="video-backdrop"></div>
+              <video id="main-video" playsinline preload="metadata" aria-label="Selected learning module video"><source id="video-source" src="" type="video/mp4" /></video>
+              <div id="video-placeholder" class="video-placeholder"><div class="placeholder-inner"><div class="placeholder-symbol" id="placeholder-symbol">▶</div><h3 id="placeholder-title">Ready for your module</h3><p id="placeholder-copy">Attach a vertical MP4 to this module in the database to begin playback.</p></div></div>
+              <div class="reel-top"><span class="live-chip" data-i18n="localStream">LOCAL STREAM</span><span class="format-chip" id="format-chip">9:16 / SHORT</span></div>
+              <div class="reel-content">
+                <div class="module-kicker" id="module-kicker">MODULE 01 / AP DASHBOARD</div>
+                <h1 id="module-title">Connect to the ESP32 dashboard</h1>
+                <p id="module-description">How to connect to the ESP32 local Wi-Fi and use the browser dashboard without internet.</p>
+                <div class="progress-wrap"><div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div><div class="progress-meta"><span id="time-current">00:00</span><span id="time-total">00:00</span></div></div>
+                <div class="control-pill" aria-label="Video controls">
+                  <button id="play-button" type="button" aria-label="Play selected module">▶</button>
+                  <button id="mute-button" type="button" aria-label="Mute or unmute">⌕</button>
+                  <select id="speed-select" class="speed-select" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select>
+                  <button id="next-button" type="button" aria-label="Next module">↗</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="library-panel" aria-label="Curriculum module library">
+            <div class="library-head"><div class="library-head-row"><div><span class="eyebrow" data-i18n="curriculum">CURRICULUM</span><h2 data-i18n="learningHub">The learning hub</h2></div><span class="module-count" id="module-count">08 MODULES</span></div><p data-i18n="libraryIntro">Eight short field lessons for every sensor, relay, and safety response in your edge-isolated farm.</p></div>
+            <div id="module-list" class="module-list"></div>
+            <div class="library-foot"><span><strong id="completed-count">0%</strong> <span data-i18n="complete">path complete</span></span><span>local cache / v2.4</span></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // Add your final local or GitHub-hosted MP4 URLs to individual module objects when ready.
+      const copy = {
+        en: { network:'offline-ready system', eyebrow:'FIELD GUIDE / ESP32 SYSTEMS', headline:'Grow smarter.<br><em>Stay rooted.</em>', intro:'A visual, offline-first guide to the sensors and automatic responses powering your edge-isolated farm. Select a language to enter the learning hub.', back:'Change language', tag:'ENGLISH', localStream:'LOCAL STREAM', curriculum:'CURRICULUM', learningHub:'The learning hub', libraryIntro:'Eight short field lessons for every sensor, relay, and safety response in your edge-isolated farm.', complete:'path complete', ready:'Ready for your module', attach:'Attach a vertical MP4 to this module in the database to begin playback.', play:'Play selected module', pause:'Pause selected module', muted:'Unmute', unmuted:'Mute', loading:'Loading local stream…', noVideo:'No video attached — module preview mode.' },
+        hi: { network:'ऑफ़लाइन प्रणाली तैयार', eyebrow:'फील्ड गाइड / ESP32 सिस्टम', headline:'समझदारी से उगाएँ।<br><em>जड़ों से जुड़े रहें।</em>', intro:'आपके एज-आइसोलेटेड खेत के सेंसर और स्वचालित प्रतिक्रियाओं के लिए ऑफ़लाइन विज़ुअल गाइड। लर्निंग हब में प्रवेश करने के लिए भाषा चुनें।', back:'भाषा बदलें', tag:'हिंदी', localStream:'लोकल स्ट्रीम', curriculum:'पाठ्यक्रम', learningHub:'लर्निंग हब', libraryIntro:'आपके खेत के हर सेंसर, रिले और सुरक्षा प्रतिक्रिया के लिए आठ छोटे फील्ड पाठ।', complete:'पथ पूरा', ready:'मॉड्यूल के लिए तैयार', attach:'प्लेबैक शुरू करने के लिए डेटाबेस में इस मॉड्यूल की वर्टिकल MP4 जोड़ें।', play:'मॉड्यूल चलाएँ', pause:'मॉड्यूल रोकें', muted:'आवाज़ चालू करें', unmuted:'म्यूट करें', loading:'लोकल स्ट्रीम लोड हो रही है…', noVideo:'वीडियो उपलब्ध नहीं — मॉड्यूल प्रीव्यू मोड।' },
+        mr: { network:'ऑफलाइन प्रणाली तयार', eyebrow:'फील्ड गाइड / ESP32 प्रणाली', headline:'हुशारीने वाढवा।<br><em>मुळांशी जोडलेले राहा.</em>', intro:'तुमच्या एज-आयसोलेटेड शेतातील सेन्सर आणि स्वयंचलित प्रतिसादांसाठी ऑफलाइन व्हिज्युअल गाइड. लर्निंग हबमध्ये जाण्यासाठी भाषा निवडा.', back:'भाषा बदला', tag:'मराठी', localStream:'लोकल स्ट्रीम', curriculum:'अभ्यासक्रम', learningHub:'लर्निंग हब', libraryIntro:'तुमच्या शेतातील प्रत्येक सेन्सर, रिले आणि सुरक्षा प्रतिसादासाठी आठ छोटे फील्ड धडे.', complete:'मार्ग पूर्ण', ready:'मॉड्यूलसाठी तयार', attach:'प्लेबॅक सुरू करण्यासाठी डेटाबेसमध्ये या मॉड्यूलची व्हर्टिकल MP4 जोडा.', play:'मॉड्यूल चालवा', pause:'मॉड्यूल थांबवा', muted:'आवाज सुरू करा', unmuted:'म्यूट करा', loading:'लोकल स्ट्रीम लोड होत आहे…', noVideo:'व्हिडिओ जोडलेला नाही — मॉड्यूल प्रीव्ह्यू मोड.' }
+      };
+
+      const modules = [
+        { id:'ap-dash', icon:'⌁', format:'16:9', key:'ap', title:{en:'1. The 192.168.4.1 Dashboard',hi:'१. ESP32 डैशबोर्ड से जुड़ें',mr:'१. ESP32 डॅशबोर्ड कसा वापरावा'}, desc:{en:'Connect to the ESP32 local Wi-Fi and use the browser dashboard without internet.',hi:'बिना इंटरनेट के 192.168.4.1 वाई-फाई का उपयोग कैसे करें।',mr:'इंटरनेटशिवाय 192.168.4.1 वायफाय कसे कनेक्ट करावे.'}, video:'' },
+        { id:'soil-pump', icon:'◌', format:'9:16', key:'soil', title:{en:'2. Soil Moisture & Auto Pump',hi:'२. मिट्टी की नमी और मोटर',mr:'२. मातीचा ओलावा आणि पंप'}, desc:{en:'See how dry soil triggers the irrigation relay and pump automatically.',hi:'सूखी मिट्टी होने पर स्वचालित मोटर पंप कैसे शुरू होता है।',mr:'माती सुकल्यावर मोटर आपोआप कशी चालू होते.'}, video:'./videos/soil_hindi.mp4' },
+        { id:'dht-humid', icon:'⌁', format:'9:16', key:'dht', title:{en:'3. DHT11 Temp & Humidity',hi:'३. तापमान और नमी (DHT11)',mr:'३. तापमान व आर्द्रता (DHT11)'}, desc:{en:'Monitor climate data and see how low humidity triggers the humidifier.',hi:'हवा में नमी कम होने पर ह्यूमिडिफायर का उपयोग।',mr:'हवेत कोरडेपणा आल्यास ह्युमिडिफायर कसे चालते.'}, video:'' },
+        { id:'mq135-air', icon:'≈', format:'9:16', key:'air', title:{en:'4. MQ-135 Air Quality',hi:'४. हवा की गुणवत्ता (MQ-135)',mr:'४. हवेची गुणवत्ता (MQ-135)'}, desc:{en:'Establish a clean-air baseline and detect gas or smoke around crops.',hi:'फसल के लिए धुएं और गैस का पता कैसे लगाएं।',mr:'पिकांसाठी धूर आणि वायू प्रदूषणाची तपासणी.'}, video:'' },
+        { id:'flame-fire', icon:'✦', format:'9:16', key:'fire', title:{en:'5. Flame Sensor / Fire Alert',hi:'५. आग का अलर्ट (Flame Sensor)',mr:'५. आगीचा इशारा (Flame Sensor)'}, desc:{en:'See the dashboard raise an urgent popup and alarm during a fire event.',hi:'खेत में आग लगने पर तुरंत डैशबोर्ड अलर्ट और सायरन।',mr:'आग लागल्यास तात्काळ डॅशबोर्ड अलर्ट आणि सायरन.'}, video:'' },
+        { id:'vib-quake', icon:'∿', format:'9:16', key:'quake', title:{en:'6. Vibration & Earthquakes',hi:'६. भूकंप और कंपन सेंसर',mr:'६. भूकंप आणि कंपन सेन्सर'}, desc:{en:'Filter accidental taps and identify earthquake-like tremors.',hi:'भूकंप जैसे झटकों का सटीक पता लगाना।',mr:'भूकंपासारख्या धक्क्यांची अचूक नोंद घेणे.'}, video:'' },
+        { id:'animal-ultra', icon:'◉', format:'9:16', key:'animal', title:{en:'7. Animal Intrusion Deterrent',hi:'७. जंगली जानवर सुरक्षा',mr:'७. प्राण्यांपासून संरक्षण'}, desc:{en:'Trigger 40kHz ultrasonic bursts to help repel animal intrusion.',hi:'जानवर के छूने पर 40kHz अल्ट्रासोनिक तरंगों द्वारा बचाव।',mr:'प्राण्यांचा स्पर्श झाल्यास 40kHz अल्ट्रासोनिक लहरी.'}, video:'' },
+        { id:'manual-auto', icon:'◇', format:'9:16', key:'manual', title:{en:'8. Manual vs Auto Mode',hi:'८. मैनुअल और ऑटो मोड',mr:'८. मॅन्युअल विरुद्ध ऑटो मोड'}, desc:{en:'Override sensor thresholds and take manual control of the pump and humidifier.',hi:'सेंसर को बाईपास करके पंप को खुद कैसे कंट्रोल करें।',mr:'सेन्सरऐवजी पंप स्वतःच्या हाताने कसा नियंत्रित करावा.'}, video:'' }
+      ];
+
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+      const els = { langView:$('#view-lang'), hubView:$('#view-hub'), list:$('#module-list'), video:$('#main-video'), source:$('#video-source'), placeholder:$('#video-placeholder'), placeholderTitle:$('#placeholder-title'), placeholderCopy:$('#placeholder-copy'), placeholderSymbol:$('#placeholder-symbol'), title:$('#module-title'), desc:$('#module-description'), kicker:$('#module-kicker'), format:$('#format-chip'), progress:$('#progress-bar'), current:$('#time-current'), total:$('#time-total'), play:$('#play-button'), mute:$('#mute-button'), speed:$('#speed-select'), back:$('#back-button'), backLabel:$('#back-label'), badge:$('#lang-badge'), count:$('#module-count'), completed:$('#completed-count'), toast:$('#toast'), backdrop:$('#video-backdrop'), stage:$('#reel-stage') };
+      const readValue = (key, fallback) => { try { const value = localStorage.getItem(key); return value === null ? fallback : value; } catch (_) { return fallback; } };
+      const writeValue = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
+      let lang = ['en','hi','mr'].includes(readValue('krishividya-lang','en')) ? readValue('krishividya-lang','en') : 'en';
+      let activeIndex = 0;
+      let toastTimer = 0;
+
+      const t = (key) => copy[lang][key] || copy.en[key];
+      const moduleText = (mod, property) => mod[property][lang] || mod[property].en;
+      const formatTime = (seconds) => { if (!Number.isFinite(seconds)) return '00:00'; const minutes = Math.floor(seconds / 60).toString().padStart(2,'0'); const remainder = Math.floor(seconds % 60).toString().padStart(2,'0'); return `${minutes}:${remainder}`; };
+      const showToast = (message) => { els.toast.textContent = message; els.toast.classList.add('show'); window.clearTimeout(toastTimer); toastTimer = window.setTimeout(() => els.toast.classList.remove('show'), 2600); };
+      const getProgress = () => { try { return JSON.parse(localStorage.getItem('krishividya-progress') || '[]'); } catch (_) { return []; } };
+      const saveProgress = () => { try { localStorage.setItem('krishividya-progress', JSON.stringify(modules.map((mod) => mod.progress || 0))); } catch (_) {} };
+      const restoreProgress = () => { const saved = getProgress(); modules.forEach((mod, index) => { if (Number.isFinite(saved[index])) mod.progress = Math.max(0, Math.min(100, saved[index])); else mod.progress = 0; }); };
+
+      function applyTranslations() {
+        document.documentElement.lang = lang;
+        document.body.className = lang === 'en' ? '' : `is-${lang}`;
+        $$('[data-i18n]').forEach((element) => { const key = element.dataset.i18n; if (t(key)) element.innerHTML = t(key); });
+        els.backLabel.textContent = t('back');
+        els.badge.textContent = t('tag');
+        els.count.textContent = `${String(modules.length).padStart(2,'0')} ${lang === 'en' ? 'MODULES' : 'मॉड्यूल'}`;
+        renderModules();
+        updateActiveModule(activeIndex, false);
+      }
+
+      function renderModules() {
+        const completed = modules.reduce((sum, mod) => sum + (mod.progress || 0), 0) / modules.length;
+        els.completed.textContent = `${Math.round(completed)}%`;
+        els.list.innerHTML = modules.map((mod, index) => {
+          const value = mod.progress || 0;
+          const offset = 94 - (94 * value / 100);
+          return `<button class="module-item${index === activeIndex ? ' active' : ''}" data-index="${index}" type="button" aria-label="${moduleText(mod,'title')}"><span class="module-icon" aria-hidden="true">${mod.icon}</span><span class="module-info"><h3>${moduleText(mod,'title')}</h3><p>${moduleText(mod,'desc')}</p></span><span class="mini-track" aria-label="${value}% complete" style="--offset:${offset}"><svg viewBox="0 0 36 36"><circle class="track" cx="18" cy="18" r="15"></circle><circle class="fill" cx="18" cy="18" r="15"></circle></svg><span>${value}%</span></span></button>`;
+        }).join('');
+        $$('.module-item').forEach((item) => item.addEventListener('click', () => updateActiveModule(Number(item.dataset.index), true)));
+      }
+
+      function updateActiveModule(index, autoplay = true) {
+        activeIndex = (index + modules.length) % modules.length;
+        const mod = modules[activeIndex];
+        $$('.module-item').forEach((item, itemIndex) => item.classList.toggle('active', itemIndex === activeIndex));
+        els.title.textContent = moduleText(mod, 'title');
+        els.desc.textContent = moduleText(mod, 'desc');
+        els.kicker.textContent = `MODULE ${String(activeIndex + 1).padStart(2,'0')} / ${mod.key.toUpperCase()}`;
+        els.format.textContent = `${mod.format} / ${mod.format === '9:16' ? 'SHORT' : 'WIDE'}`;
+        els.placeholderSymbol.textContent = mod.icon;
+        els.placeholderTitle.textContent = t('ready');
+        els.placeholderCopy.textContent = mod.video ? t('loading') : t('attach');
+        els.progress.style.width = '0%';
+        els.current.textContent = '00:00';
+        els.total.textContent = '00:00';
+        els.backdrop.style.background = `radial-gradient(circle at 50% 24%, ${mod.key === 'fire' ? 'rgba(255,183,3,.30)' : 'rgba(0,255,136,.24)'}, transparent 30%), linear-gradient(160deg, ${mod.key === 'air' ? '#092c37' : '#092216'}, #020403 65%)`;
+        els.source.src = mod.video || '';
+        els.video.load();
+        els.placeholder.classList.toggle('hidden', Boolean(mod.video));
+        els.play.textContent = '▶';
+        els.play.setAttribute('aria-label', t('play'));
+        if (autoplay && mod.video) els.video.play().catch(() => showToast(t('loading')));
+        const selected = els.list.querySelector(`[data-index="${activeIndex}"]`);
+        if (selected) selected.scrollIntoView({ block:'nearest', behavior:'smooth' });
+      }
+
+      function startApp(selectedLanguage) {
+        lang = selectedLanguage;
+        writeValue('krishividya-lang', lang);
+        applyTranslations();
+        els.langView.classList.remove('active');
+        window.setTimeout(() => els.hubView.classList.add('active'), 100);
+      }
+      function goHome() { els.video.pause(); els.hubView.classList.remove('active'); window.setTimeout(() => els.langView.classList.add('active'), 140); }
+
+      $$('.lang-card').forEach((card) => {
+        const tilt = (event) => { const rect = card.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width; const y = (event.clientY - rect.top) / rect.height; card.style.setProperty('--ry', `${(x - .5) * 12}deg`); card.style.setProperty('--rx', `${(.5 - y) * 12}deg`); card.style.setProperty('--mx', `${x * 100}%`); card.style.setProperty('--my', `${y * 100}%`); };
+        card.addEventListener('pointermove', tilt);
+        card.addEventListener('pointerleave', () => { card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg'); });
+        card.addEventListener('click', () => startApp(card.dataset.lang));
+      });
+      els.back.addEventListener('click', goHome);
+      els.play.addEventListener('click', () => { if (!modules[activeIndex].video) return showToast(t('noVideo')); if (els.video.paused) els.video.play(); else els.video.pause(); });
+      els.nextButton = $('#next-button');
+      els.nextButton.addEventListener('click', () => updateActiveModule(activeIndex + 1, true));
+      els.mute.addEventListener('click', () => { els.video.muted = !els.video.muted; els.mute.textContent = els.video.muted ? '◌' : '⌕'; els.mute.setAttribute('aria-label', els.video.muted ? t('muted') : t('unmuted')); });
+      els.speed.addEventListener('change', () => { els.video.playbackRate = Number(els.speed.value); });
+      els.video.addEventListener('play', () => { els.play.textContent = 'Ⅱ'; els.play.setAttribute('aria-label', t('pause')); els.placeholder.classList.add('hidden'); });
+      els.video.addEventListener('pause', () => { els.play.textContent = '▶'; els.play.setAttribute('aria-label', t('play')); });
+      els.video.addEventListener('loadedmetadata', () => { els.total.textContent = formatTime(els.video.duration); });
+      els.video.addEventListener('timeupdate', () => { const percent = els.video.duration ? (els.video.currentTime / els.video.duration) * 100 : 0; els.progress.style.width = `${percent}%`; els.current.textContent = formatTime(els.video.currentTime); });
+      els.video.addEventListener('ended', () => { modules[activeIndex].progress = 100; saveProgress(); renderModules(); updateActiveModule(activeIndex + 1, true); });
+      els.video.addEventListener('error', () => { els.placeholder.classList.remove('hidden'); els.placeholderTitle.textContent = t('noVideo'); els.placeholderCopy.textContent = t('attach'); });
+      $('#theme-button').addEventListener('click', () => { document.body.classList.toggle('bright-ambient'); showToast('Ambient field mode toggled'); });
+      document.addEventListener('keydown', (event) => { if (!els.hubView.classList.contains('active')) return; if (event.key === ' ') { event.preventDefault(); els.play.click(); } if (event.key === 'ArrowRight') updateActiveModule(activeIndex + 1, true); if (event.key === 'ArrowLeft') updateActiveModule(activeIndex - 1, true); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden && !els.video.paused) els.video.pause(); });
+
+      // Lightweight decorative particles only; no device permissions or external APIs are required.
+      const canvas = $('#particle-field');
+      const context = canvas.getContext('2d');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let particles = [];
+      function resizeCanvas() { canvas.width = window.innerWidth * window.devicePixelRatio; canvas.height = window.innerHeight * window.devicePixelRatio; canvas.style.width = `${window.innerWidth}px`; canvas.style.height = `${window.innerHeight}px`; context.setTransform(window.devicePixelRatio,0,0,window.devicePixelRatio,0,0); particles = Array.from({ length: reducedMotion ? 22 : 58 }, () => ({ x:Math.random() * window.innerWidth, y:Math.random() * window.innerHeight, radius:Math.random() * 1.8 + .35, alpha:Math.random() * .55 + .12, vx:(Math.random() - .5) * .14, vy:-(Math.random() * .22 + .03), phase:Math.random() * Math.PI * 2 })); }
+      function drawParticles(time = 0) { context.clearRect(0,0,window.innerWidth,window.innerHeight); particles.forEach((particle) => { particle.x += particle.vx; particle.y += particle.vy; particle.phase += .008; if (particle.y < -10) particle.y = window.innerHeight + 10; if (particle.x < -10) particle.x = window.innerWidth + 10; if (particle.x > window.innerWidth + 10) particle.x = -10; context.beginPath(); context.fillStyle = `rgba(71,255,160,${particle.alpha * (.7 + Math.sin(particle.phase + time / 1000) * .3)})`; context.shadowColor = '#00ff88'; context.shadowBlur = particle.radius * 6; context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2); context.fill(); }); if (!reducedMotion) window.requestAnimationFrame(drawParticles); }
+      window.addEventListener('resize', resizeCanvas);
+      restoreProgress();
+      resizeCanvas();
+      drawParticles();
+      renderModules();
+      updateActiveModule(0, false);
+    })();
+  </script>
+</body>
+</html>
